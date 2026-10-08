@@ -2,21 +2,28 @@ import { useState } from "react";
 import BoardTasksForm from "./BoardTasksForm/BoardTasksForm";
 import useSWRMutation from "swr/mutation";
 import { useSWRConfig } from "swr";
-import { sendRequest } from "../../api/api-config";
+import { putTasks } from "../../api/api-config";
+import dayjs from "dayjs";
 
-function BoardTasksItem({ task }) {
-  const { id, color, description, is_archived, is_favorite } = task;
+function BoardTasksItem({ task, setIsAddingTasks }) {
+  const { id, color, description, is_archived, is_favorite, due_date } = task;
 
-  const [isEdit, setIsEdit] = useState(false);
+  const [isEdit, setIsEdit] = useState(task.isEdit);
   const handleEdit = () => {
     setIsEdit(true);
   };
 
-  const { trigger } = useSWRMutation(`tasks/${id}`, sendRequest);
+  const { trigger } = useSWRMutation(`tasks/${id}`, putTasks);
   const { mutate } = useSWRConfig("/tasks");
 
   if (isEdit) {
-    return <BoardTasksForm task={task} setIsEdit={setIsEdit} />;
+    return (
+      <BoardTasksForm
+        task={task}
+        setIsEdit={setIsEdit}
+        setIsAddingTasks={setIsAddingTasks}
+      />
+    );
   }
 
   const handleButton = async (event, arg) => {
@@ -83,11 +90,15 @@ function BoardTasksItem({ task }) {
           <div class="card__settings">
             <div class="card__details">
               <div class="card__dates">
-                <div class="card__date-deadline">
-                  <p class="card__input-deadline-wrap">
-                    <span class="card__date">23 September</span>
-                  </p>
-                </div>
+                {due_date && (
+                  <div class="card__date-deadline">
+                    <p class="card__input-deadline-wrap">
+                      <span class="card__date">
+                        {dayjs(due_date).format("D MMMM")}
+                      </span>
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>

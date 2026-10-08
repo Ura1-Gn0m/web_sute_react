@@ -93,6 +93,10 @@ const DEFAULT_TASK = {
     fr: false,
     sa: false,
     su: false,
+    
   },
+  isEdit:true
 };
+
+
 export { filterCallBacks, sortedCallBacks, filters, colors, DEFAULT_TASK };
